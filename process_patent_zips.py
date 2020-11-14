@@ -13,6 +13,10 @@ OUTPUT_DIR = 'output'
 
 def open_zips(data_dir):
     year_dirs = os.listdir(data_dir)
+    try:
+        os.mkdir(f'{OUTPUT_DIR}')
+    except FileExistsError:
+        pass
     for year in year_dirs:
         year_dir = f'{data_dir}/{year}'
         zips_arr = os.listdir(year_dir)
@@ -45,7 +49,7 @@ def save_xml(file, output):
     xml_index = 0
     with open(output + '.csv', 'a', newline='', encoding='utf-8') as csv_file:
         writer = csv.writer(csv_file, delimiter=',',
-                            quotechar='|', quoting=csv.QUOTE_ALL)
+                            quotechar='|', quoting=csv.QUOTE_MINIMAL)
         writer.writerow(['description'])
     for line in file:
         line = line.decode('utf-8')
@@ -53,7 +57,7 @@ def save_xml(file, output):
             if xml_index > 0:
                 with open(output + '.csv', 'a', newline='', encoding='utf-8') as csv_file:
                     writer = csv.writer(csv_file, delimiter=',',
-                                        quotechar='|', quoting=csv.QUOTE_ALL)
+                                        quotechar='|', quoting=csv.QUOTE_MINIMAL)
                     root = ET.fromstring(working_xml)
                     content_to_write = ''
                     for child in root:
@@ -68,7 +72,9 @@ def save_xml(file, output):
                                 except TypeError:
                                     pass
                             if len(content_to_write) > 0:
-                                writer.writerow([content_to_write])
+                                formatted_content = content_to_write.replace(
+                                    ',', ' ')
+                                writer.writerow([formatted_content])
             xml_index += 1
             working_xml = line
             print(f'{xml_index} patents processed for {output}', end='\r')
