@@ -3,7 +3,8 @@ import os
 
 DATA_DIR = 'output'
 OUTPUT_DIR = 'csv'
-OUTPUT_FILE = 'patent_abstracts'
+OUTPUT_FILE = 'patent_abstracts_clean'
+MIN_LEN = 25
 
 
 def combine_csv(input_dir):
@@ -29,7 +30,8 @@ def combine_csv(input_dir):
                     reader = csv.reader(input_file)
                     csv_index += 1
                     for row in reader:
-                        writer.writerow(row)
+                        if len(row) > 0 and len(row[0]) > MIN_LEN:
+                            writer.writerow(row)
                 print(f'Copied {csv_index} files into {output_path}', end='\r')
 
 
